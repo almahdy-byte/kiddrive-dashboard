@@ -79,7 +79,7 @@ export default function Login() {
           <Link to="/forgot-password" style={styles.link}>Forgot password?</Link>
         </div>
         <div style={styles.footer}>
-          Don&apos;t have an account? <Link to="/register" style={styles.link}>Register</Link>
+          Don&apos;t have an account? <Link to="/register" style={styles.link}>Applay as a driver</Link>
         </div>
       </div>
     </div>

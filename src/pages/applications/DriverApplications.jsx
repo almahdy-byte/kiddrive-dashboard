@@ -277,6 +277,46 @@ export default function DriverApplications() {
                   </div>
                 </div>
               )}
+
+              {(viewModal.driver?.licenseImage?.secure_url || viewModal.driver?.nationalIdImage?.secure_url) && (
+                <div style={{ marginTop: 24 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Driver Documents</h3>
+                  <div style={styles.imageGrid}>
+                    {viewModal.driver?.licenseImage?.secure_url && (
+                      <div style={styles.imageCard}>
+                        <p style={styles.imageLabel}>License</p>
+                        <a href={viewModal.driver.licenseImage.secure_url} target="_blank" rel="noopener noreferrer">
+                          <img src={viewModal.driver.licenseImage.secure_url} alt="License" style={styles.thumbnail} />
+                        </a>
+                      </div>
+                    )}
+                    {viewModal.driver?.nationalIdImage?.secure_url && (
+                      <div style={styles.imageCard}>
+                        <p style={styles.imageLabel}>National ID</p>
+                        <a href={viewModal.driver.nationalIdImage.secure_url} target="_blank" rel="noopener noreferrer">
+                          <img src={viewModal.driver.nationalIdImage.secure_url} alt="National ID" style={styles.thumbnail} />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {viewModal.vehicle?.governmentDocuments?.length > 0 && (
+                <div style={{ marginTop: 24 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Government Documents</h3>
+                  <div style={styles.imageGrid}>
+                    {viewModal.vehicle.governmentDocuments.map((doc, i) => (
+                      <div key={doc._id || i} style={styles.imageCard}>
+                        <p style={styles.imageLabel}>Document {i + 1}</p>
+                        <a href={doc.secure_url} target="_blank" rel="noopener noreferrer">
+                          <img src={doc.secure_url} alt={`Document ${i + 1}`} style={styles.thumbnail} />
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -405,5 +445,33 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
     gap: 16,
+  },
+  imageGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+    gap: 12,
+  },
+  imageCard: {
+    background: '#f9fafb',
+    borderRadius: 12,
+    padding: 8,
+    textAlign: 'center',
+  },
+  imageLabel: {
+    fontSize: 11,
+    fontWeight: 600,
+    color: '#888',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 6,
+  },
+  thumbnail: {
+    width: '100%',
+    height: 120,
+    objectFit: 'cover',
+    borderRadius: 8,
+    cursor: 'pointer',
+    border: '1px solid #eee',
+    transition: 'opacity 0.2s',
   },
 };
