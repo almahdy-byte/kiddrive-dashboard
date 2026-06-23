@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -12,18 +13,19 @@ const titleMap = {
 };
 
 export default function Layout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const title = titleMap[location.pathname] || 'Dashboard';
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar />
-      <main style={{ marginLeft: 250, flex: 1, minHeight: '100vh', background: '#f5f5f5' }}>
-        <Header title={title} />
-        <div style={{ padding: 24 }}>
+    <div className="layout">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="layout-main">
+        <Header title={title} onMenuToggle={() => setSidebarOpen(true)} />
+        <div className="layout-content">
           <Outlet />
         </div>
-      </main>
+      </div>
     </div>
   );
 }

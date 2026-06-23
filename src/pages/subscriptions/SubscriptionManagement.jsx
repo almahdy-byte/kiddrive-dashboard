@@ -151,101 +151,105 @@ export default function SubscriptionManagement() {
             <p>No subscriptions found</p>
           </div>
         ) : (
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Driver Name</th>
-                  <th>Parent Name</th>
-                  <th>Child Name</th>
-                  <th>Status</th>
-                  <th>Type</th>
-                  <th>Expiry Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {subscriptions.map((sub) => {
-                  const id = sub._id || sub.id;
-                  const driver = sub.driverId || sub.driver;
-                  const parent = sub.parentId || sub.parent;
-                  const child = sub.childId || sub.child;
-                  const driverName = getName(driver);
-                  const parentName = getName(parent);
-                  const childName = getName(child);
-                  return (
-                    <tr
-                      key={id}
-                      onClick={() => handleView(id)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <td style={{ fontWeight: 600 }}>{driverName}</td>
-                      <td>{parentName}</td>
-                      <td>{childName}</td>
-                      <td>
-                        <span className={STATUS_BADGES[sub.status] || 'badge'}>
-                          {STATUS_LABELS[sub.status] || sub.status}
-                        </span>
-                      </td>
-                      <td style={{ textTransform: 'capitalize' }}>{sub.subscriptionType || '-'}</td>
-                      <td style={{ color: '#666', fontSize: 13 }}>{formatDate(sub.expiryDate)}</td>
-                      <td>
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          <button
-                            className="btn btn-sm btn-outline"
-                            onClick={(e) => { e.stopPropagation(); handleView(id); }}
-                          >
-                            View
-                          </button>
-                          {canModify(sub.status) && (
-                            <>
-                              {sub.status === 'waiting for confirmation' && (
-                                <button
-                                  className="btn btn-sm btn-success"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleStatusUpdate(id, 'accepted');
-                                  }}
-                                  disabled={actionLoading}
-                                >
-                                  Accept
-                                </button>
-                              )}
-                              {(sub.status === 'waiting for confirmation' || sub.status === 'accepted subscription') && (
-                                <button
-                                  className="btn btn-sm btn-danger"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleStatusUpdate(id, 'rejected');
-                                  }}
-                                  disabled={actionLoading}
-                                >
-                                  Reject
-                                </button>
-                              )}
-                              {sub.status === 'accepted subscription' && (
-                                <button
-                                  className="btn btn-sm btn-outline"
-                                  style={{ color: '#3b82f6', borderColor: '#3b82f6' }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleStatusUpdate(id, 'canceled');
-                                  }}
-                                  disabled={actionLoading}
-                                >
-                                  Cancel
-                                </button>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </td>
+          <>
+            <div className="desktop-table">
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Driver Name</th>
+                      <th>Parent Name</th>
+                      <th>Child Name</th>
+                      <th>Status</th>
+                      <th>Type</th>
+                      <th>Expiry Date</th>
+                      <th>Actions</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody>
+                    {subscriptions.map((sub) => {
+                      const id = sub._id || sub.id;
+                      const driver = sub.driverId || sub.driver;
+                      const parent = sub.parentId || sub.parent;
+                      const child = sub.childId || sub.child;
+                      const driverName = getName(driver);
+                      const parentName = getName(parent);
+                      const childName = getName(child);
+                      return (
+                        <tr key={id} onClick={() => handleView(id)} style={{ cursor: 'pointer' }}>
+                          <td style={{ fontWeight: 600 }}>{driverName}</td>
+                          <td>{parentName}</td>
+                          <td>{childName}</td>
+                          <td><span className={STATUS_BADGES[sub.status] || 'badge'}>{STATUS_LABELS[sub.status] || sub.status}</span></td>
+                          <td style={{ textTransform: 'capitalize' }}>{sub.subscriptionType || '-'}</td>
+                          <td style={{ color: '#666', fontSize: 13 }}>{formatDate(sub.expiryDate)}</td>
+                          <td>
+                            <div style={{ display: 'flex', gap: 6 }}>
+                              <button className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); handleView(id); }}>View</button>
+                              {canModify(sub.status) && (
+                                <>
+                                  {sub.status === 'waiting for confirmation' && (
+                                    <button className="btn btn-sm btn-success" onClick={(e) => { e.stopPropagation(); handleStatusUpdate(id, 'accepted'); }} disabled={actionLoading}>Accept</button>
+                                  )}
+                                  {(sub.status === 'waiting for confirmation' || sub.status === 'accepted subscription') && (
+                                    <button className="btn btn-sm btn-danger" onClick={(e) => { e.stopPropagation(); handleStatusUpdate(id, 'rejected'); }} disabled={actionLoading}>Reject</button>
+                                  )}
+                                  {sub.status === 'accepted subscription' && (
+                                    <button className="btn btn-sm btn-outline" style={{ color: '#3b82f6', borderColor: '#3b82f6' }} onClick={(e) => { e.stopPropagation(); handleStatusUpdate(id, 'canceled'); }} disabled={actionLoading}>Cancel</button>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="mobile-cards">
+              {subscriptions.map((sub) => {
+                const id = sub._id || sub.id;
+                const driver = sub.driverId || sub.driver;
+                const parent = sub.parentId || sub.parent;
+                const child = sub.childId || sub.child;
+                const driverName = getName(driver);
+                const parentName = getName(parent);
+                const childName = getName(child);
+                return (
+                  <div key={id} className="mobile-card" onClick={() => handleView(id)}>
+                    <div className="mobile-card-header">
+                      <span className="mobile-card-title">{driverName}</span>
+                      <span className={STATUS_BADGES[sub.status] || 'badge'}>{STATUS_LABELS[sub.status] || sub.status}</span>
+                    </div>
+                    <div className="mobile-card-body">
+                      <div className="mobile-card-row"><span>Parent</span><span>{parentName}</span></div>
+                      <div className="mobile-card-row"><span>Child</span><span>{childName}</span></div>
+                      <div className="mobile-card-row"><span>Type</span><span>{sub.subscriptionType || '-'}</span></div>
+                      <div className="mobile-card-row"><span>Expires</span><span>{formatDate(sub.expiryDate)}</span></div>
+                    </div>
+                    <div className="mobile-card-actions">
+                      <button className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); handleView(id); }}>View</button>
+                      {canModify(sub.status) && (
+                        <>
+                          {sub.status === 'waiting for confirmation' && (
+                            <button className="btn btn-sm btn-success" onClick={(e) => { e.stopPropagation(); handleStatusUpdate(id, 'accepted'); }} disabled={actionLoading}>Accept</button>
+                          )}
+                          {(sub.status === 'waiting for confirmation' || sub.status === 'accepted subscription') && (
+                            <button className="btn btn-sm btn-danger" onClick={(e) => { e.stopPropagation(); handleStatusUpdate(id, 'rejected'); }} disabled={actionLoading}>Reject</button>
+                          )}
+                          {sub.status === 'accepted subscription' && (
+                            <button className="btn btn-sm btn-outline" style={{ color: '#3b82f6', borderColor: '#3b82f6' }} onClick={(e) => { e.stopPropagation(); handleStatusUpdate(id, 'canceled'); }} disabled={actionLoading}>Cancel</button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
         {totalPages > 1 && (
@@ -444,7 +448,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 16,
+    gap: 12,
     marginBottom: 20,
     flexWrap: 'wrap',
   },
@@ -454,6 +458,7 @@ const styles = {
     background: '#f0f0f0',
     borderRadius: 12,
     padding: 4,
+    flexWrap: 'wrap',
   },
   tab: {
     padding: '8px 20px',

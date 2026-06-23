@@ -177,101 +177,121 @@ export default function TripManagement() {
   };
 
   const renderTable = (tripList, showActiveActions) => (
-    <div className="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Driver Name</th>
-            <th>Parent Name</th>
-            <th>Child Name</th>
-            <th>Trip Type</th>
-            <th>Status</th>
-            <th>Scheduled Date</th>
-            <th>Scheduled Time</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tripList.map((trip) => {
-            const tripId = trip._id || trip.id;
-            const driver = trip.driverId || trip.driver;
-            const parent = trip.parentId || trip.parent;
-            const child = trip.childId || trip.child;
-            const driverName = getName(driver);
-            const parentName = getName(parent);
-            const childName = getName(child);
-            const tripType = trip.tripType || trip.type;
-            const scheduleDate = formatDate(trip.scheduledDate || trip.schedule?.date);
-            const scheduleTime = formatTime(trip.scheduledTime || trip.schedule?.time);
-            const nextAction = showActiveActions ? NEXT_STATUS[trip.status] : null;
-
-            return (
-              <tr
-                key={tripId}
-                onClick={() => handleViewTrip(trip)}
-                style={{ cursor: 'pointer' }}
-              >
-                <td style={{ fontWeight: 600 }}>{driverName}</td>
-                <td>{parentName}</td>
-                <td>{childName}</td>
-                <td>
-                  <span style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '4px 12px',
-                    borderRadius: 20,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    background: tripType === 'pickup' ? '#dbeafe' : '#fef3c7',
-                    color: tripType === 'pickup' ? '#1e40af' : '#92400e',
-                  }}>
-                    <span>{tripType === 'pickup' ? '\u{1F4E6}' : '\u{1F691}'}</span>
-                    {(tripType || '—').charAt(0).toUpperCase() + (tripType || '—').slice(1)}
-                  </span>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      background: statusTimelineColor(trip.status),
-                      flexShrink: 0,
-                    }} />
-                    <span className={`badge ${STATUS_BADGE[trip.status] || 'badge-info'}`}>
-                      {STATUS_LABEL[trip.status] || trip.status || '—'}
-                    </span>
-                  </div>
-                </td>
-                <td>{scheduleDate}</td>
-                <td>{scheduleTime}</td>
-                <td onClick={(e) => e.stopPropagation()}>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <button
-                      className="btn btn-sm btn-outline"
-                      onClick={() => handleViewTrip(trip)}
-                    >
-                      View
-                    </button>
-                    {nextAction && (
-                      <button
-                        className="btn btn-sm btn-primary"
-                        disabled={statusUpdating === tripId}
-                        onClick={() => handleStatusUpdate(trip)}
-                        style={{ opacity: statusUpdating === tripId ? 0.6 : 1 }}
-                      >
-                        {statusUpdating === tripId ? '...' : nextAction.label}
-                      </button>
-                    )}
-                  </div>
-                </td>
+    <>
+      <div className="desktop-table">
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Parent</th>
+                <th>Child</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Actions</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+            </thead>
+            <tbody>
+              {tripList.map((trip) => {
+                const tripId = trip._id || trip.id;
+                const driver = trip.driverId || trip.driver;
+                const parent = trip.parentId || trip.parent;
+                const child = trip.childId || trip.child;
+                const driverName = getName(driver);
+                const parentName = getName(parent);
+                const childName = getName(child);
+                const tripType = trip.tripType || trip.type;
+                const scheduleDate = formatDate(trip.scheduledDate || trip.schedule?.date);
+                const scheduleTime = formatTime(trip.scheduledTime || trip.schedule?.time);
+                const nextAction = showActiveActions ? NEXT_STATUS[trip.status] : null;
+
+                return (
+                  <tr key={tripId} onClick={() => handleViewTrip(trip)} style={{ cursor: 'pointer' }}>
+                    <td style={{ fontWeight: 600 }}>{driverName}</td>
+                    <td>{parentName}</td>
+                    <td>{childName}</td>
+                    <td>
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6,
+                        padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600,
+                        background: tripType === 'pickup' ? '#dbeafe' : '#fef3c7',
+                        color: tripType === 'pickup' ? '#1e40af' : '#92400e',
+                      }}>
+                        <span>{tripType === 'pickup' ? '\u{1F4E6}' : '\u{1F691}'}</span>
+                        {(tripType || '—').charAt(0).toUpperCase() + (tripType || '—').slice(1)}
+                      </span>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ width: 10, height: 10, borderRadius: '50%', background: statusTimelineColor(trip.status), flexShrink: 0 }} />
+                        <span className={`badge ${STATUS_BADGE[trip.status] || 'badge-info'}`}>{STATUS_LABEL[trip.status] || trip.status || '—'}</span>
+                      </div>
+                    </td>
+                    <td>{scheduleDate}</td>
+                    <td>{scheduleTime}</td>
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button className="btn btn-sm btn-outline" onClick={() => handleViewTrip(trip)}>View</button>
+                        {nextAction && (
+                          <button className="btn btn-sm btn-primary" disabled={statusUpdating === tripId}
+                            onClick={() => handleStatusUpdate(trip)}
+                            style={{ opacity: statusUpdating === tripId ? 0.6 : 1 }}>
+                            {statusUpdating === tripId ? '...' : nextAction.label}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="mobile-cards">
+        {tripList.map((trip) => {
+          const tripId = trip._id || trip.id;
+          const driver = trip.driverId || trip.driver;
+          const parent = trip.parentId || trip.parent;
+          const child = trip.childId || trip.child;
+          const driverName = getName(driver);
+          const parentName = getName(parent);
+          const childName = getName(child);
+          const tripType = trip.tripType || trip.type;
+          const scheduleDate = formatDate(trip.scheduledDate || trip.schedule?.date);
+          const scheduleTime = formatTime(trip.scheduledTime || trip.schedule?.time);
+          const nextAction = showActiveActions ? NEXT_STATUS[trip.status] : null;
+
+          return (
+            <div key={tripId} className="mobile-card" onClick={() => handleViewTrip(trip)}>
+              <div className="mobile-card-header">
+                <span className="mobile-card-title">{driverName}</span>
+                <span className={`badge ${STATUS_BADGE[trip.status] || 'badge-info'}`}>{STATUS_LABEL[trip.status] || trip.status || '—'}</span>
+              </div>
+              <div className="mobile-card-body">
+                <div className="mobile-card-row"><span>Parent</span><span>{parentName}</span></div>
+                <div className="mobile-card-row"><span>Child</span><span>{childName}</span></div>
+                <div className="mobile-card-row"><span>Type</span><span>{(tripType || '—').charAt(0).toUpperCase() + (tripType || '—').slice(1)}</span></div>
+                <div className="mobile-card-row"><span>Date</span><span>{scheduleDate}</span></div>
+                <div className="mobile-card-row"><span>Time</span><span>{scheduleTime}</span></div>
+              </div>
+              <div className="mobile-card-actions">
+                <button className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); handleViewTrip(trip); }}>View</button>
+                {nextAction && (
+                  <button className="btn btn-sm btn-primary" disabled={statusUpdating === tripId}
+                    onClick={(e) => { e.stopPropagation(); handleStatusUpdate(trip); }}
+                    style={{ opacity: statusUpdating === tripId ? 0.6 : 1 }}>
+                    {statusUpdating === tripId ? '...' : nextAction.label}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 
   return (
@@ -313,7 +333,7 @@ export default function TripManagement() {
               </button>
             ))}
           </div>
-          <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8, width: 320 }}>
+          <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 360 }}>
             <div className="search-bar" style={{ flex: 1 }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />

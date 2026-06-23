@@ -130,43 +130,45 @@ export default function DriverApplications() {
             <p>No {status} applications found</p>
           </div>
         ) : (
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Driver Name</th>
-                  <th>Email</th>
-                  <th>National ID</th>
-                  <th>Vehicle</th>
-                  <th>Status</th>
-                  <th>Created At</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {applications.map((app) => (
-                  <tr key={app._id || app.id} onClick={() => handleView(app._id || app.id)} style={{ cursor: 'pointer' }}>
-                    <td style={{ fontWeight: 600 }}>{app.driver?.userName || app.driver?.fullName || app.driver?.name || '-'}</td>
-                    <td>{app.driver?.email || '-'}</td>
-                    <td>{app.driver?.nationalId || '-'}</td>
-                    <td>
-                      {app.vehicle
-                        ? `${app.vehicle.carModel || app.vehicle.model || app.vehicle.make || ''} ${app.vehicle.plateNumber || ''}`.trim() || '-'
-                        : '-'}
-                    </td>
-                    <td><span className={statusBadge[app.status]}>{app.status}</span></td>
-                    <td style={{ color: '#666', fontSize: 13 }}>
-                      {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '-'}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <button className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); handleView(app._id || app.id); }}>View</button>
-                        {app.status === 'pending' && (
-                          <>
-                            <button
-                              className="btn btn-sm btn-success"
-                              onClick={(e) => { e.stopPropagation(); setActionModal({ id: app._id || app.id, action: 'approve', note: '' }); }}
-                            >
+          <>
+          <div className="desktop-table">
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Driver Name</th>
+                    <th>Email</th>
+                    <th>National ID</th>
+                    <th>Vehicle</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {applications.map((app) => (
+                    <tr key={app._id || app.id} onClick={() => handleView(app._id || app.id)} style={{ cursor: 'pointer' }}>
+                      <td style={{ fontWeight: 600 }}>{app.driver?.userName || app.driver?.fullName || app.driver?.name || '-'}</td>
+                      <td>{app.driver?.email || '-'}</td>
+                      <td>{app.driver?.nationalId || '-'}</td>
+                      <td>
+                        {app.vehicle
+                          ? `${app.vehicle.carModel || app.vehicle.model || app.vehicle.make || ''} ${app.vehicle.plateNumber || ''}`.trim() || '-'
+                          : '-'}
+                      </td>
+                      <td><span className={statusBadge[app.status]}>{app.status}</span></td>
+                      <td style={{ color: '#666', fontSize: 13 }}>
+                        {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '-'}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <button className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); handleView(app._id || app.id); }}>View</button>
+                          {app.status === 'pending' && (
+                            <>
+                              <button
+                                className="btn btn-sm btn-success"
+                                onClick={(e) => { e.stopPropagation(); setActionModal({ id: app._id || app.id, action: 'approve', note: '' }); }}
+                              >
                               Approve
                             </button>
                             <button
@@ -184,9 +186,36 @@ export default function DriverApplications() {
               </tbody>
             </table>
           </div>
-        )}
+        </div>
+        <div className="mobile-cards">
+          {applications.map((app) => (
+            <div key={app._id || app.id} className="mobile-card" onClick={() => handleView(app._id || app.id)}>
+              <div className="mobile-card-header">
+                <span className="mobile-card-title">{app.driver?.userName || app.driver?.fullName || app.driver?.name || '-'}</span>
+                <span className={statusBadge[app.status]}>{app.status}</span>
+              </div>
+              <div className="mobile-card-body">
+                <div className="mobile-card-row"><span>Email</span><span>{app.driver?.email || '-'}</span></div>
+                <div className="mobile-card-row"><span>National ID</span><span>{app.driver?.nationalId || '-'}</span></div>
+                <div className="mobile-card-row"><span>Vehicle</span><span>{(app.vehicle ? `${app.vehicle.carModel || app.vehicle.model || ''} ${app.vehicle.plateNumber || ''}`.trim() : '-') || '-'}</span></div>
+                <div className="mobile-card-row"><span>Created</span><span>{app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '-'}</span></div>
+              </div>
+              <div className="mobile-card-actions">
+                <button className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); handleView(app._id || app.id); }}>View</button>
+                {app.status === 'pending' && (
+                  <>
+                    <button className="btn btn-sm btn-success" onClick={(e) => { e.stopPropagation(); setActionModal({ id: app._id || app.id, action: 'approve', note: '' }); }}>Approve</button>
+                    <button className="btn btn-sm btn-danger" onClick={(e) => { e.stopPropagation(); setActionModal({ id: app._id || app.id, action: 'reject', note: '' }); }}>Reject</button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        </>
+      )}
 
-        {totalPages > 1 && (
+      {totalPages > 1 && (
           <div style={styles.pagination}>
             <button
               className="btn btn-sm btn-outline"
